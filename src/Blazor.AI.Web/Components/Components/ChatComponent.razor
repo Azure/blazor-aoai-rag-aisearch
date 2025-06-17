@@ -116,7 +116,7 @@ Last Modified On : 01-16-2025
 #pragma warning disable SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
     [Inject]
-    private IConfiguration Configuration { get; set; }
+    private IConfiguration Configuration { get; set; } = null!;
 
     private Kernel? kernel;
     private IChatCompletionService? chatCompletionService;
@@ -151,13 +151,13 @@ Last Modified On : 01-16-2025
         kernelBuilder.AddAzureOpenAIChatCompletion(aoaiChatDeploymentName, aoaiEndpoint, aoaiKey);
 
         // Register Azure OpenAI Text Embeddings Generation
-        kernelBuilder.Services.AddAzureOpenAITextEmbeddingGeneration(aoaiEmbeddingDeploymentName, aoaiEndpoint, aoaiKey);
-
+        kernelBuilder.Services.AddAzureOpenAIEmbeddingGenerator(aoaiEmbeddingDeploymentName, aoaiEndpoint, aoaiKey);
+        
         // Register Search Index
         kernelBuilder.Services.AddSingleton(_ => new SearchIndexClient(new Uri(searchServiceEndpoint), new AzureKeyCredential(searchApiKey)));
 
         // Register Azure AI Search Vector Store
-        kernelBuilder.AddAzureAISearchVectorStore();
+        kernelBuilder.Services.AddAzureAISearchVectorStore();
 
         // Finalize Kernel Builder
         this.kernel = kernelBuilder.Build();
